@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     public void onClickNewGame(View v){
         for(int i = 0; i < buttons.length; i++){
             buttons[i].setText("");
+            buttons[i].setEnabled(true);
         }
 
         currPlayer = x;
@@ -55,8 +56,21 @@ public class MainActivity extends AppCompatActivity {
         for(int i = 0; i < buttons.length; i++){
             if(v == buttons[i] && buttons[i].getText() == ""){
                 buttons[i].setText(currPlayer.playerName);
+                disableButtons(i);
+            }
+            else if(v == buttons[i] && buttons[i].getText() != "") {
                 changePlayer();
             }
+        }
+        if(isWinnerFound(currPlayer.playerName)){
+            gameOver();
+            displayGameResults(currPlayer.playerName + " Wins!");
+        }
+        else if(isTieGame()){
+            displayGameResults("Tie Game!");
+        }
+        else {
+            changePlayer();
         }
     }
 
@@ -73,6 +87,10 @@ public class MainActivity extends AppCompatActivity {
         game_updates.setText("Player " + currPlayer.playerName + "'s Turn");
     }
 
+    private void displayGameResults(String results){
+        game_updates.setText(results);
+    }
+
     private void changePlayer(){
         if(currPlayer == x){
             currPlayer = o;
@@ -82,5 +100,44 @@ public class MainActivity extends AppCompatActivity {
         }
 
         displayCurrPlayer();
+    }
+
+    private boolean isWinnerFound(String player){
+        if (        // Rows
+               (buttons[0].getText() == player && buttons[1].getText() == player && buttons[2].getText() == player ||
+                buttons[3].getText() == player && buttons[4].getText() == player && buttons[5].getText() == player ||
+                buttons[6].getText() == player && buttons[7].getText() == player && buttons[8].getText() == player) ||
+                        // Columns
+               (buttons[0].getText() == player && buttons[3].getText() == player && buttons[6].getText() == player ||
+                buttons[1].getText() == player && buttons[4].getText() == player && buttons[7].getText() == player ||
+                buttons[2].getText() == player && buttons[5].getText() == player && buttons[8].getText() == player) ||
+                        // Diagonals
+               (buttons[0].getText() == player && buttons[4].getText() == player && buttons[8].getText() == player ||
+                buttons[2].getText() == player && buttons[4].getText() == player && buttons[6].getText() == player))
+                {
+                    return true;
+                }
+
+        return false;
+    }
+
+    private boolean isTieGame(){
+        for(int i = 0; i < buttons.length; i++){
+            if(buttons[i].getText() == ""){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private void disableButtons(int buttonNum){
+        buttons[buttonNum].setEnabled(false);
+    }
+
+    private void gameOver(){
+        for (int i = 0; i < buttons.length; i++){
+            buttons[i].setEnabled(false);
+        }
     }
 }
